@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
+#include <fstream> // file streaming
+#include <limits> 
 using namespace std;
 
 void manu();
@@ -69,19 +71,32 @@ void manu()
 
 }
 
-int log_in() // return if not exist return -1 else return id
+int log_in() // return ID otherwise return -1
 {
-	return -1;
-}
-
-int get_id()
-{
-	return 0;
-}
-
-int student_profile()
-{
-	return 0;
+    int ID, Password;
+    int tempID, tempPassword;
+    ifstream inFile;
+    inFile.open("/Users/adamyahnin/Documents/projects/test basics/test basics/StudentsDB.txt");//StudentsDB.txt location
+    if(inFile.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    cout << "Enter id: "<<endl;
+    cin >> ID;
+    cout << "Enter Password";
+    cin >>Password;
+    while(inFile>>tempID){
+        if(tempID==ID){
+            inFile >> tempPassword;
+            if(tempPassword==Password){
+                return ID;
+            }
+        }
+        inFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
+    }
+    
+    
+    return -1;
 }
 
 // handle in student profile
