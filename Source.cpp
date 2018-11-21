@@ -228,7 +228,7 @@ void manager_profile(int id)
 		}
 		case 6:
 		{
-			manu();
+			menu();
 			break;
 		}
 		default:
