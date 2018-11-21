@@ -78,7 +78,7 @@ int log_in(int i) // return ID otherwise return -1
     int ID, Password;
     int tempID, tempPassword;
     ifstream inFile;
-    inFile.open("/Users/adamyahnin/Documents/projects/test basics/test basics/StudentsDB.txt");//StudentsDB.txt location
+    inFile.open("StudentsDB.txt");//StudentsDB.txt location
     if(inFile.fail()){
         cerr<<"error copying file to inFile"<<endl;
         exit(1);
