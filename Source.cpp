@@ -109,7 +109,7 @@ void student_profile(int id)
 
 	cout << "Profile student" << endl;
 	cout << "choose a number:" << endl;
-	cout << "1 - show my event" << endl << "2 - new event" << endl << "3 - back to manu" << endl;
+	cout << "1 - show my event" << endl << "2 - new event" << endl << "3 - back to menu" << endl;
 	cin >> choose;
 
 	switch (choose)
@@ -151,7 +151,7 @@ void manager_profile(int id)
 
 	cout << "Profile manager" << endl;
 	cout << "choose a number:" << endl;
-	cout << "1- pending events" << endl << "2-closed events" << endl << "3- all event" << endl << "4- reports" << endl<<"5- new event"<<endl << "6 - back to manu" << endl;
+	cout << "1- pending events" << endl << "2-closed events" << endl << "3- all event" << endl << "4- reports" << endl<<"5- new event"<<endl << "6 - back to menu" << endl;
 	cin >> choose;
 
 	switch (choose)
