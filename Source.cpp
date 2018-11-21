@@ -42,19 +42,21 @@ void menu()
 		{
 		case 1: // student 
 		{
-			if (log_in() == -1)
+			id = log_in(1);
+			if (id == -1)
 			{
 				is_log_in = false;
 				break;
 			}
-			id = log_in();
 			student_profile(id);
 
 			break;
 		}
 		case 2: // manager
 		{
-			if (!log_in())
+
+			id = log_in(2);
+			if (id == -1)
 			{
 				is_log_in = false;
 				break;
@@ -71,7 +73,7 @@ void menu()
 
 }
 
-int log_in() // return ID otherwise return -1
+int log_in(int i) // return ID otherwise return -1
 {
     int ID, Password;
     int tempID, tempPassword;
