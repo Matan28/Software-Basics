@@ -5,8 +5,8 @@
 #include <limits> 
 using namespace std;
 
-void manu();
-int log_in();
+void menu();
+int log_in(int i);
 void student_profile(int id);
 void manager_profile(int id);
 void print_my_event(int id);
@@ -22,11 +22,11 @@ void print_events_by_supervisor();
 
 int main()
 {
-	manu();
+	menu();
 	return 0;
 }
 
-void manu()
+void menu()
 {
 	int user_type, id;
 	bool is_log_in = true;
@@ -133,7 +133,7 @@ void student_profile(int id)
 	}
 	case 3:
 	{
-		manu();
+		menu();
 		break;
 	}
 	default:
@@ -252,7 +252,7 @@ void manager_profile(int id)
 	}
 	case 6:
 	{
-		manu();
+		menu();
 		break;
 	}
 	default:
