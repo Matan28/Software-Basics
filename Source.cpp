@@ -6,7 +6,7 @@
 using namespace std;
 
 void menu();
-int log_in(int i);
+int log_in(int authorization);
 void student_profile(int id);
 void manager_profile(int id);
 void print_my_event(int id);
@@ -73,28 +73,29 @@ void menu()
 
 }
 
-int log_in(int i) // return ID otherwise return -1
+int log_in(int authorization) // return ID otherwise return -1
 {
     int ID, Password;
-    int tempID, tempPassword;
-    ifstream inFile;
-    inFile.open("StudentsDB.txt");//StudentsDB.txt location
-    if(inFile.fail()){
+    int tempID, tempPassword,tempAuthorization;
+    ifstream StudentsDBFile;
+    StudentsDBFile.open("/Users/adamyahnin/Documents/Software-Basics/StudentsDB.txt");//StudentsDB.txt location
+    if(StudentsDBFile.fail()){
         cerr<<"error copying file to inFile"<<endl;
         exit(1);
     }
     cout << "Enter id: "<<endl;
     cin >> ID;
-    cout << "Enter Password";
-    cin >>Password;
-    while(inFile>>tempID){
+    cout << "Enter Password: "<<endl;
+    cin >> Password;
+    while(StudentsDBFile>>tempID){
         if(tempID==ID){
-            inFile >> tempPassword;
-            if(tempPassword==Password){
+            StudentsDBFile >> tempPassword;
+            StudentsDBFile >> tempAuthorization;
+            if(tempPassword==Password && authorization==tempAuthorization){
                 return ID;
             }
         }
-        inFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
+        StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
     }
     
     
