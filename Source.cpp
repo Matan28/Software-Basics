@@ -46,6 +46,48 @@ enum supervisor
 	, Maintenance=3
 	, Students_Association=4
 };
+
+//enum string
+string get_status_string(status st)
+{
+	switch (st)
+	{
+	case Done: {return "Done"; break; }
+	case In_treatment: {return "In treatment";  break; }
+	case In_process: {return "In process"; break; }
+	default: break;
+	}
+	return string();
+}
+string get_priority_string(priority pr)
+{
+	switch (pr)
+	{
+	case High: {return "High"; break; }
+	case Low: {return "Low"; break; }
+	default:
+		break;
+	}
+
+	return string();
+}
+
+string get_supervisor_string(supervisor sup)
+{
+	switch (sup)
+	{
+	case Securing: {return "Securing"; break; }
+	case Cleaning: {return "Cleaning"; break; }
+	case Dean: {return "Dean"; break; }
+	case Maintenance: {return "Maintenance"; break; }
+	case Students_Association: {return "Students Association"; break; }
+
+	default:
+		break;
+	}
+	return string();
+}
+
 int main()
 {
 	menu();
@@ -60,7 +102,7 @@ void menu()
 	system("cls");
 	cout << "Welcome to SCE" << endl;
 	cout << "Choose a number: " << endl;
-	cout << "1- student" << endl << "2 - manager" << endl;
+	cout << "1- student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
 	cin >> user_type;
 	system("cls");
 	do
@@ -92,6 +134,8 @@ void menu()
 			manager_profile(id);
 			break;
 		}
+		case 3:
+			cout << "Bye Bye...." << endl;
 		default:
 			exit(1);
 			break;
@@ -215,7 +259,7 @@ void manager_profile(int id)
 		{
 			system("cls");
 			print_all_event();
-			cout << endl << "Enter 3 - back to student profile";
+			cout << endl << "Enter 3 - back to student profile: ";
 			cin >> choose;
 			if (choose == 3)
 				manager_profile(id);
@@ -225,7 +269,7 @@ void manager_profile(int id)
 		{
 			system("cls");
 			print_common_evnets();
-			cout << endl << "Enter 3 - back to student profile";
+			cout << endl << "Enter 3 - back to student profile: ";
 			cin >> choose;
 			if (choose == 3)
 				manager_profile(id);
@@ -235,7 +279,7 @@ void manager_profile(int id)
 		{
 			system("cls");
 			print_events_by_supervisor();
-			cout << endl << "Enter 3 - back to student profile";
+			cout << endl << "Enter 3 - back to student profile: ";
 			cin >> choose;
 			if (choose == 3)
 				manager_profile(id);
@@ -245,7 +289,7 @@ void manager_profile(int id)
 		{
 			system("cls");
 			print_pending_events_by_supervisor();
-			cout << endl << "Enter 3 - back to student profile";
+			cout << endl << "Enter 3 - back to student profile: ";
 			cin >> choose;
 			if (choose == 3)
 				manager_profile(id);
@@ -298,13 +342,15 @@ void print_my_event(int id)
 
 void new_event(int id)
 {
+	system("cls");
 	int tempID, temp = 1;
 	static int event_number = 1;
 	string event_description, subject, first_name, last_name;
-	status st = In_process;
+	status st(In_process);
 	priority pr;
+	supervisor sup;
 	ifstream students_DBFile;
-	fstream event_DBFile;
+	ofstream event_DBFile;
 	//add time!!!
 	students_DBFile.open("StudentsDB.txt");//StudentsDB.txt location
 	if (students_DBFile.fail()) {
@@ -315,10 +361,13 @@ void new_event(int id)
 	{
 		if (tempID == id)
 		{
-			students_DBFile.ignore();
+			students_DBFile >> temp;
+			students_DBFile >> temp;
 			students_DBFile >> first_name;
 			students_DBFile >> last_name;
 		}
+
+		students_DBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
 	}
 	students_DBFile.close();
 
@@ -328,8 +377,10 @@ void new_event(int id)
 	cin >> event_description;
 	cout << "choose a number: 0- for high priority or 1 - for low priority: ";
 	cin >> temp;
-	pr = (priority)temp;
-
+	pr = priority(temp);
+	cout << endl << "choose a number: 0 - for Securing, 1- for Cleaning, 2- for Dean, 3- for Maintenance, 4- for Students Association:";
+	cin >> temp;
+	sup = supervisor(temp);
 
 	if (is_event_exist(event_description))
 	{
@@ -342,9 +393,12 @@ void new_event(int id)
 		}
 
 		//////->>> write to file!!
-		
+		// date first!!!!!!->chenage
+		event_DBFile << "24/12/2018," << event_number << "," << subject << "," << event_description << "," << get_status_string(st) << ","<<
+			get_supervisor_string(sup) <<","<< get_priority_string(pr) << "," << first_name << " " << last_name << "," << id;
+
 		system("cls");
-		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " + event_number << endl;
+		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " << event_number << endl;
 		event_number++;
 	}
 	else
@@ -394,6 +448,8 @@ bool is_event_exist(string description_event)
 {
 	return true;
 }
+
+
 
 
 
