@@ -1,5 +1,0 @@
-207993940	noy nir		21/09/2018,11:23	335	security	there is a suspicious object	in process	security	high	received in the system on 21/09/2018,11:23
-203248786	adam yahnin	18/07/2018,19:07	102	deficiencies	there is a blinking light in class 1003z	done	maintenance	low	received in the system on 18/07/2018 at 19:07, status change to in treatment on 19/07/2018 at 18:30,status change to done on 30/07/2018 at 14:01
-111111111	kesem even hen	20/05/2018,17:25	67	studies		we need more practice hours	in treatment	dean	high	received in the system on 20/05/2018 at 17:25, status change to in treatment on 25/05/2018 at 09:34
-111111112	yarin	edri	14/09/2018,14:55	321	broken air contioner	the air conditioner does not work in the security guard's room		done	maintenance	low	received in the system on 14/09/2018 at 14:55, status change to in treatment on 14/09/2018 at 15:30,status change to done on 14/09/2018 at 18:00
-			
