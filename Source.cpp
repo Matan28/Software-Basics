@@ -303,7 +303,8 @@ void new_event(int id)
 	string event_description, subject, first_name, last_name;
 	status st = In_process;
 	priority pr;
-	ifstream students_DBFile, event_DBFile;
+	ifstream students_DBFile;
+	fstream event_DBFile;
 	//add time!!!
 	students_DBFile.open("StudentsDB.txt");//StudentsDB.txt location
 	if (students_DBFile.fail()) {
@@ -332,7 +333,7 @@ void new_event(int id)
 
 	if (is_event_exist(event_description))
 	{
-		event_DBFile.open("EventsDB.txt");
+		event_DBFile.open("eventDB.csv", fstream::in | fstream::out | fstream::app);
 
 		if (event_DBFile.fail())
 		{
@@ -341,13 +342,15 @@ void new_event(int id)
 		}
 
 		//////->>> write to file!!
-
+		
 		system("cls");
 		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " + event_number << endl;
 		event_number++;
 	}
 	else
 		cout << "Sorry!!!" << endl << "You've already opened an event about it.." << endl;
+
+	event_DBFile.close();
 }
 
 int pending_events()
@@ -389,7 +392,7 @@ void print_events_by_supervisor()
 
 bool is_event_exist(string description_event)
 {
-	return false;
+	return true;
 }
 
 
