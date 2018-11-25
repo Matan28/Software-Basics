@@ -345,6 +345,7 @@ void print_my_event(int ID){
             exit(1);
         }
     }
+}
 
 void new_event(int id)
 {
