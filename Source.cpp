@@ -9,18 +9,17 @@
 using namespace std;
 
 void menu();
-int log_in(int authorization);
+int log_in(int authorization);//logs in for student & manager alike .
 void student_profile(int id);
 void manager_profile(int id);
-void print_my_event(int id);
+void print_my_event(int id);//prints all events by ID .
 void new_event(int id);
 int pending_events();
 void change_event(int event_number);
-void print_closed_events();
 void reports();
-void print_common_evnets();
-void print_all_event();
-void print_pending_events_by_supervisor();
+void print_common_evnets_stat();
+void print_all_events();//prints all events .
+void print_by_event_number(int Event_number);//prints the event (gets event number) .
 void print_events_by_supervisor();
 bool is_event_exist(string description_event);
 void back_to_student_profile(int id);
@@ -51,8 +50,9 @@ enum supervisor
 	, Maintenance=3
 	, Students_Association=4
 };
-
 //enum string
+void print_closed_events(supervisor sup);
+void print_pending_events(supervisor sup);// prints all pending and in progress events .of supervisor
 string get_status_string(status st)
 {
 	switch (st)
@@ -107,14 +107,14 @@ void menu()
 	system("cls");
 	cout << "Welcome to SCE" << endl<<endl;
 	cout << "Choose a number: " << endl;
-	cout << "1 - student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
+	cout << "1- student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> user_type;
 
 	system("cls");
 	do
 	{
-		switch (user_type)
+        switch (user_type)
 		{
 		case 1: // student 
 		{
@@ -190,7 +190,7 @@ void student_profile(int id)
 	cout << "Student profile!" << endl<<endl;
 	cout << "choose a number:" << endl;
 	cout << "1 - show my event" << endl << "2 - new event" << endl << "3 - back to menu" << endl;
-	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
+	cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 	cin >> choose;
 
 	switch (choose)
@@ -226,7 +226,7 @@ void manager_profile(int id)
 	cout << "Profile manager" << endl<<endl;
 	cout << "choose a number:" << endl;
 	cout << "1- pending events" << endl << "2-closed events" << endl << "3- all event" << endl << "4- reports" << endl<<"5- new event"<<endl << "6 - back to menu" << endl;
-	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
+	cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 	cin >> choose;
 
 	switch (choose)
@@ -240,29 +240,29 @@ void manager_profile(int id)
 	}
 	case 2:
 	{
-		print_closed_events();
+        print_closed_events(sup);
 		back_to_manager_profile(id);
 		break;
 	}
 	case 3:
 	{
 		cout << "choose a number:" << endl;
-		cout <<"1- show all event"<<endl << "2- common events" << endl << "3- events by supervisor" << endl << "4- pending events by supervisor" << endl<<"5 - back to manager profile"<<endl;
-		cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
+		cout <<"1- show all event"<<endl << "2- common events" << endl << "3- events by supervisor" << endl << "4- pending events by supervisor" << "5-print events by event number"<<endl<<"6 - back to manager profile"<<endl;
+		cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 		cin >> choose;
 		switch (choose)
 		{
 		case 1:
 		{
 			system("cls");
-			print_all_event();
+			print_all_events();
 			back_to_manager_profile(id);
 			break;
 		}
 		case 2:
 		{
 			system("cls");
-			print_common_evnets();
+			print_common_evnets_stat();
 			back_to_manager_profile(id);
 			break;
 		}
@@ -276,16 +276,27 @@ void manager_profile(int id)
 		case 4:
 		{
 			system("cls");
-			print_pending_events_by_supervisor();
+            print_pending_events(supervisor sup);
 			back_to_manager_profile(id);
 			break;
 		}
-		case 5:
+        case 5:
+        {
+            system("cls");
+            int eventNo;
+            cout<<"Enter the Event number: ";
+            cin>>eventNo;
+            cout<<endl;
+            print_by_event_number(eventNo);
+            back_to_manager_profile(id);
+            
+        }
+		case 6:
 		{
 		    manager_profile(id);
 			break;
 		}
-		case 6:
+		case 7:
 		{
 			menu();
 			break;
@@ -317,7 +328,34 @@ void manager_profile(int id)
 		break;
 	}
 }
-
+void print_by_event_number(int Event_number){
+    int tempEventnumber=0;
+    string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
+    ifstream eventsDB;
+    eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
+    if(eventsDB.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(eventsDB.good()){
+        getline(eventsDB,date1,',');
+        getline(eventsDB,Event_Number,',');
+        getline(eventsDB,Subject,',');
+        getline(eventsDB,Event_Description,',');
+        getline(eventsDB,Status,',');
+        getline(eventsDB,Supervisor,',');
+        getline(eventsDB,priority,',');
+        getline(eventsDB,Creator_name,',');
+        getline(eventsDB,Creator_ID,',');
+        tempEventnumber=stoi(Event_Number);
+        if(Event_number==tempEventnumber){
+            cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
+            return;
+        }
+    }
+    cout<<endl;
+}
 void print_my_event(int ID){
     int tempID=0;
     string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
@@ -340,12 +378,11 @@ void print_my_event(int ID){
         getline(eventsDB,Creator_ID,',');
         tempID=stoi(Creator_ID);
         if(ID==tempID){
-            cout<<Event_Description<<endl;
-            exit(1);
+            cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
         }
     }
+    cout<<endl;
 }
-
 void new_event(int id)
 {
 	system("cls");
@@ -391,9 +428,7 @@ void new_event(int id)
 	cout << endl << "Enter 0 - high"<<endl<<"Enter 1 - low"<<endl<<endl<<"Enter your choose: ";
 	cin >> temp;
 	pr = priority(temp);
-	cout << "----------------------------------------";
-	cout << endl <<"Choose supervisor:"<<endl<<endl <<"Enter 0 - Securing" << endl<<"Enter 1 - Cleaning"<<endl
-		<<"Enter 2 - Dean"<<endl<<"Enter 3 - Maintenance"<<endl<<"Enter 4 - Students Association"<<endl<<endl << "Enter your choose: ";
+	cout << endl << "choose a number: 0 - for Securing, 1- for Cleaning, 2- for Dean, 3- for Maintenance, 4- for Students Association:";
 	cin >> temp;
 	sup = supervisor(temp);
 
@@ -437,8 +472,33 @@ void change_event(int event_number)
 {
 }
 
-void print_closed_events()
+void print_closed_events(supervisor sup)
 {
+    string supervisor;
+    supervisor=get_supervisor_string(super);
+    string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
+    ifstream eventsDB;
+    eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
+    if(eventsDB.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(eventsDB.good()){
+        getline(eventsDB,date1,',');
+        getline(eventsDB,Event_Number,',');
+        getline(eventsDB,Subject,',');
+        getline(eventsDB,Event_Description,',');
+        getline(eventsDB,Status,',');
+        getline(eventsDB,Supervisor,',');
+        getline(eventsDB,priority,',');
+        getline(eventsDB,Creator_name,',');
+        getline(eventsDB,Creator_ID,',');
+        if(Status=="closed" && Supervisor==supervisor){
+            cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
+        }
+    }
+    cout<<endl;
 }
 
 void all_event()
@@ -449,17 +509,62 @@ void reports()
 {
 }
 
-void print_common_evnets()
+void print_common_evnets_stat()
 {
 }
 
-void print_all_event()
+void print_all_events()
 {
+    string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
+    ifstream eventsDB;
+    eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
+    if(eventsDB.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(eventsDB.good()){
+        getline(eventsDB,date1,',');
+        getline(eventsDB,Event_Number,',');
+        getline(eventsDB,Subject,',');
+        getline(eventsDB,Event_Description,',');
+        getline(eventsDB,Status,',');
+        getline(eventsDB,Supervisor,',');
+        getline(eventsDB,priority,',');
+        getline(eventsDB,Creator_name,',');
+        getline(eventsDB,Creator_ID,',');
+        cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
+    }
+    cout<<endl;
 }
 
-void print_pending_events_by_supervisor()
+void print_pending_events(supervisor sup)// prints all pending and in progress events
 {
+    string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
+    ifstream eventsDB;
+    eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
+    if(eventsDB.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(eventsDB.good()){
+        getline(eventsDB,date1,',');
+        getline(eventsDB,Event_Number,',');
+        getline(eventsDB,Subject,',');
+        getline(eventsDB,Event_Description,',');
+        getline(eventsDB,Status,',');
+        getline(eventsDB,Supervisor,',');
+        getline(eventsDB,priority,',');
+        getline(eventsDB,Creator_name,',');
+        getline(eventsDB,Creator_ID,',');
+        if(Status=="pending" || Status=="In treatment" && Supervisor==supervisor){
+            cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
+        }
+    }
+    cout<<endl;
 }
+
 
 void print_events_by_supervisor()
 {
