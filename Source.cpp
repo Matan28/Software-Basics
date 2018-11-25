@@ -18,11 +18,9 @@ void print_my_event(int id);//prints all events by ID .
 void new_event(int id);
 int pending_events();
 void change_event(int event_number);
-void print_closed_events(); //prints all closed events .
 void reports();
 void print_common_evnets_stat();
 void print_all_events();//prints all events .
-void print_pending_events();// prints all pending and in progress events .
 void print_by_event_number(int Event_number);//prints the event (gets event number) .
 void print_events_by_supervisor();
 bool is_event_exist(string description_event);
@@ -53,8 +51,9 @@ enum supervisor
 	, Maintenance=3
 	, Students_Association=4
 };
-
 //enum string
+void print_closed_events(supervisor sup);
+void print_pending_events(supervisor sup);// prints all pending and in progress events .of supervisor
 string get_status_string(status st)
 {
 	switch (st)
@@ -116,7 +115,7 @@ void menu()
 	system("cls");
 	do
 	{
-		switch (user_type)
+        switch (user_type)
 		{
 		case 1: // student 
 		{
@@ -242,7 +241,7 @@ void manager_profile(int id)
 	}
 	case 2:
 	{
-		print_closed_events();
+        print_closed_events(sup);
 		back_to_manager_profile(id);
 		break;
 	}
@@ -278,7 +277,7 @@ void manager_profile(int id)
 		case 4:
 		{
 			system("cls");
-			print_pending_events();
+            print_pending_events(supervisor sup);
 			back_to_manager_profile(id);
 			break;
 		}
@@ -427,7 +426,7 @@ void new_event(int id)
 	cout << "choose a number: 0- for high priority or 1 - for low priority: ";
 	cin >> temp;
 	pr = priority(temp);
-	cout << endl << "choose a number: 0 - for Securing, 1- for Cleaning, 2- for Dean, 3- for Maintenance, 4- for Students Association:";
+	cout << endl << "choose a number: 0 - for Security, 1- for Cleaning, 2- for Dean, 3- for Maintenance, 4- for Students Association:";
 	cin >> temp;
 	sup = supervisor(temp);
 
@@ -471,8 +470,10 @@ void change_event(int event_number)
 {
 }
 
-void print_closed_events()
+void print_closed_events(supervisor sup)
 {
+    string supervisor;
+    supervisor=get_supervisor_string(super);
     string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
     ifstream eventsDB;
     eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
@@ -491,7 +492,7 @@ void print_closed_events()
         getline(eventsDB,priority,',');
         getline(eventsDB,Creator_name,',');
         getline(eventsDB,Creator_ID,',');
-        if(Status=="closed"){
+        if(Status=="closed" && Supervisor==supervisor){
             cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
         }
     }
@@ -535,7 +536,7 @@ void print_all_events()
     cout<<endl;
 }
 
-void print_pending_events()// prints all pending and in progress events
+void print_pending_events(supervisor sup)// prints all pending and in progress events
 {
     string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
     ifstream eventsDB;
@@ -555,7 +556,7 @@ void print_pending_events()// prints all pending and in progress events
         getline(eventsDB,priority,',');
         getline(eventsDB,Creator_name,',');
         getline(eventsDB,Creator_ID,',');
-        if(Status=="pending" || Status=="In treatment"){
+        if(Status=="pending" || Status=="In treatment" && Supervisor==supervisor){
             cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
         }
     }
