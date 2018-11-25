@@ -1,9 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <stdlib.h>
 #include <string>
 #include <fstream> // file streaming
 #include <limits> 
 #include <time.h> // for date
+#include <conio.h>
+
 
 using namespace std;
 
@@ -233,7 +236,7 @@ void manager_profile(int id)
 	{
 		event_number = pending_events(); // print all pending event and choose event number for change and return that
 		change_event(event_number);
-		cout << endl << "Enter 3 - back to student profile";
+		cout << endl << "Enter 3 - back to student profile: ";
 		cin >> choose;
 		if (choose == 3)
 			manager_profile(id);
@@ -242,7 +245,7 @@ void manager_profile(int id)
 	case 2:
 	{
 		print_closed_events();
-		cout << endl << "Enter 3 - back to student profile";
+		cout << endl << "Enter 3 - back to student profile: ";
 		cin >> choose;
 		if (choose == 3)
 			manager_profile(id);
@@ -314,12 +317,16 @@ void manager_profile(int id)
 	case 4:
 	{
 		reports();
+		cout << endl << "Enter 3 - back to student profile: ";
+		cin >> choose;
+		if (choose == 3)
+			student_profile(id);
 		break;
 	}
 	case 5:
 	{
 		new_event(id);
-		cout << endl << "Enter 3 - back to student profile";
+		cout << endl << "Enter 3 - back to student profile: ";
 		cin >> choose;
 		if (choose == 3)
 			student_profile(id);
@@ -336,7 +343,7 @@ void manager_profile(int id)
 	}
 }
 
-void print_my_event(int id)
+void print_my_event(int id) // for student
 {
 }
 
@@ -344,7 +351,7 @@ void new_event(int id)
 {
 	system("cls");
 	int tempID, temp = 1;
-	static int event_number = 1;
+	static int event_number = 4;
 	string event_description, subject, first_name, last_name;
 	status st(In_process);
 	priority pr;
@@ -352,6 +359,10 @@ void new_event(int id)
 	ifstream students_DBFile;
 	ofstream event_DBFile;
 	//add time!!!
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	char time_buffer[80];
+	strftime(time_buffer, 80, "%d/%m/%Y-%I:%M",ltm);
 	students_DBFile.open("StudentsDB.txt");//StudentsDB.txt location
 	if (students_DBFile.fail()) {
 		cerr << "error copying file to inFile" << endl;
@@ -367,7 +378,7 @@ void new_event(int id)
 			students_DBFile >> last_name;
 		}
 
-		students_DBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
+		students_DBFile.ignore(std::numeric_limits<std::streamsize>::max(),'\n');// skips a line
 	}
 	students_DBFile.close();
 
@@ -394,7 +405,7 @@ void new_event(int id)
 
 		//////->>> write to file!!
 		// date first!!!!!!->chenage
-		event_DBFile << "24/12/2018," << event_number << "," << subject << "," << event_description << "," << get_status_string(st) << ","<<
+		event_DBFile << time_buffer <<"," << event_number << "," << subject << "," << event_description << "," << get_status_string(st) << ","<<
 			get_supervisor_string(sup) <<","<< get_priority_string(pr) << "," << first_name << " " << last_name << "," << id;
 
 		system("cls");
