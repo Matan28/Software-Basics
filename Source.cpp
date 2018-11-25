@@ -319,8 +319,38 @@ void manager_profile(int id)
 	}
 }
 
-void print_my_event(int id) // for student
-{
+void print_my_event(int ID){
+    int tempID=0;
+    string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,priority,Creator_name,Creator_ID;
+    ifstream eventsDB;
+    eventsDB.open("/Users/adamyahnin/Documents/SoftwareBasics1/SoftwareBasics/events test nonbool/events test nonbool/eventDB.csv");
+    if(eventsDB.fail()){
+        cerr<<"error copying file to inFile"<<endl;
+        exit(1);
+    }
+    eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(eventsDB.good()){
+        getline(eventsDB,date1,',');
+        getline(eventsDB,Event_Number,',');
+        getline(eventsDB,Subject,',');
+        getline(eventsDB,Event_Description,',');
+        getline(eventsDB,Status,',');
+        getline(eventsDB,Supervisor,',');
+        getline(eventsDB,priority,',');
+        getline(eventsDB,Creator_name,',');
+        getline(eventsDB,Creator_ID,',');
+        tempID=stoi(Creator_ID);
+        if(ID==tempID){
+            cout<<Event_Description<<endl;
+            exit(1);
+        }
+    }
+}
+int main(){
+    int id;
+    id=665847930;
+    print_my_event(id);
+    return 0;
 }
 
 void new_event(int id)
