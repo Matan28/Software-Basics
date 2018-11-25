@@ -25,6 +25,9 @@ void print_all_event();
 void print_pending_events_by_supervisor();
 void print_events_by_supervisor();
 bool is_event_exist(string description_event);
+void back_to_student_profile(int id);
+void back_to_manager_profile(int id );
+
 
 enum status
 {
@@ -103,10 +106,12 @@ void menu()
 	bool is_log_in = true;
 
 	system("cls");
-	cout << "Welcome to SCE" << endl;
+	cout << "Welcome to SCE" << endl<<endl;
 	cout << "Choose a number: " << endl;
 	cout << "1- student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
+	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> user_type;
+
 	system("cls");
 	do
 	{
@@ -183,9 +188,10 @@ void student_profile(int id)
 	int choose;
 	system("cls");
 
-	cout << "Student profile!" << endl;
+	cout << "Student profile!" << endl<<endl;
 	cout << "choose a number:" << endl;
 	cout << "1 - show my event" << endl << "2 - new event" << endl << "3 - back to menu" << endl;
+	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> choose;
 
 	switch (choose)
@@ -193,20 +199,13 @@ void student_profile(int id)
 	case 1:
 	{
 		print_my_event(id);
-		
-		cout << endl << "Enter 3 - back to student profile";
-		cin >> choose;
-		if(choose == 3)
-		   student_profile(id);
+		back_to_student_profile(id);
 		break;
 	}
 	case 2:
 	{
 		new_event(id);
-		cout << endl << "Enter 3 - back to student profile";
-		cin >> choose;
-		if (choose == 3)
-			student_profile(id);
+		back_to_student_profile(id);
 		break;
 	}
 	case 3:
@@ -225,9 +224,10 @@ void manager_profile(int id)
 	int choose, event_number;
 	system("cls");
 
-	cout << "Profile manager" << endl;
+	cout << "Profile manager" << endl<<endl;
 	cout << "choose a number:" << endl;
 	cout << "1- pending events" << endl << "2-closed events" << endl << "3- all event" << endl << "4- reports" << endl<<"5- new event"<<endl << "6 - back to menu" << endl;
+	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> choose;
 
 	switch (choose)
@@ -236,25 +236,20 @@ void manager_profile(int id)
 	{
 		event_number = pending_events(); // print all pending event and choose event number for change and return that
 		change_event(event_number);
-		cout << endl << "Enter 3 - back to student profile: ";
-		cin >> choose;
-		if (choose == 3)
-			manager_profile(id);
+		back_to_manager_profile(id);
 		break;
 	}
 	case 2:
 	{
 		print_closed_events();
-		cout << endl << "Enter 3 - back to student profile: ";
-		cin >> choose;
-		if (choose == 3)
-			manager_profile(id);
+		back_to_manager_profile(id);
 		break;
 	}
 	case 3:
 	{
 		cout << "choose a number:" << endl;
 		cout <<"1- show all event"<<endl << "2- common events" << endl << "3- events by supervisor" << endl << "4- pending events by supervisor" << endl<<"5 - back to manager profile"<<endl;
+		cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 		cin >> choose;
 		switch (choose)
 		{
@@ -262,45 +257,32 @@ void manager_profile(int id)
 		{
 			system("cls");
 			print_all_event();
-			cout << endl << "Enter 3 - back to student profile: ";
-			cin >> choose;
-			if (choose == 3)
-				manager_profile(id);
+			back_to_manager_profile(id);
 			break;
 		}
 		case 2:
 		{
 			system("cls");
 			print_common_evnets();
-			cout << endl << "Enter 3 - back to student profile: ";
-			cin >> choose;
-			if (choose == 3)
-				manager_profile(id);
+			back_to_manager_profile(id);
 			break;
 		}
 		case 3:
 		{
 			system("cls");
 			print_events_by_supervisor();
-			cout << endl << "Enter 3 - back to student profile: ";
-			cin >> choose;
-			if (choose == 3)
-				manager_profile(id);
+			back_to_manager_profile(id);
 			break;
 		}
 		case 4:
 		{
 			system("cls");
 			print_pending_events_by_supervisor();
-			cout << endl << "Enter 3 - back to student profile: ";
-			cin >> choose;
-			if (choose == 3)
-				manager_profile(id);
+			back_to_manager_profile(id);
 			break;
 		}
 		case 5:
 		{
-			
 		    manager_profile(id);
 			break;
 		}
@@ -317,19 +299,13 @@ void manager_profile(int id)
 	case 4:
 	{
 		reports();
-		cout << endl << "Enter 3 - back to student profile: ";
-		cin >> choose;
-		if (choose == 3)
-			student_profile(id);
+		back_to_manager_profile(id);
 		break;
 	}
 	case 5:
 	{
 		new_event(id);
-		cout << endl << "Enter 3 - back to student profile: ";
-		cin >> choose;
-		if (choose == 3)
-			student_profile(id);
+		back_to_manager_profile(id);
 		break;
 	}
 	case 6:
@@ -351,8 +327,8 @@ void new_event(int id)
 {
 	system("cls");
 	int tempID, temp = 1;
-	static int event_number = 4;
-	string event_description, subject, first_name, last_name;
+	static int event_number = 4; // add file 
+	string event_description, first_name, last_name, subject;
 	status st(In_process);
 	priority pr;
 	supervisor sup;
@@ -420,7 +396,13 @@ void new_event(int id)
 
 int pending_events()
 {
-	return 0;
+	int event_num;
+	// print all event is not done
+
+	cout << endl << "-----------------------------------"<<endl << "Enter a event number for change: ";
+	cin >> event_num;
+	cout << "-----------------------------------" << endl;
+	return event_num;
 }
 
 void change_event(int event_number)
@@ -458,6 +440,27 @@ void print_events_by_supervisor()
 bool is_event_exist(string description_event)
 {
 	return true;
+}
+
+void back_to_student_profile(int id)
+{
+	cout << endl << "-----------------------------------" << endl;
+	cout <<  "Enter for back to student profile";
+	cout << endl << "-----------------------------------" << endl;
+	getchar();
+	getchar();
+	student_profile(id);
+}
+
+void back_to_manager_profile(int id)
+{
+
+	cout << endl << "-----------------------------------" << endl;
+	cout <<  "Enter for back to manager profile";
+	cout << endl << "-----------------------------------" << endl;
+	getchar();
+	getchar();
+	manager_profile(id);
 }
 
 
