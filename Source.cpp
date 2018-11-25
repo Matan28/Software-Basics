@@ -6,8 +6,6 @@
 #include <limits> 
 #include <time.h> // for date
 
-
-
 using namespace std;
 
 void menu();
@@ -26,7 +24,8 @@ void print_pending_events_by_supervisor();
 void print_events_by_supervisor();
 bool is_event_exist(string description_event);
 void back_to_student_profile(int id);
-void back_to_manager_profile(int id );
+void back_to_manager_profile(int id ); 
+int get_set_event_number(int choose, int current = 0);
 
 
 enum status
@@ -108,7 +107,7 @@ void menu()
 	system("cls");
 	cout << "Welcome to SCE" << endl<<endl;
 	cout << "Choose a number: " << endl;
-	cout << "1- student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
+	cout << "1 - student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> user_type;
 
@@ -351,7 +350,7 @@ void new_event(int id)
 {
 	system("cls");
 	int tempID, temp = 1;
-	static int event_number = 4; // add file 
+	int event_number = get_set_event_number(0); // read form file 
 	string event_description, first_name, last_name, subject;
 	status st(In_process);
 	priority pr;
@@ -381,15 +380,20 @@ void new_event(int id)
 		students_DBFile.ignore(std::numeric_limits<std::streamsize>::max(),'\n');// skips a line
 	}
 	students_DBFile.close();
-
-	cout << "Enter a subject: " << endl;
+	cout <<  "----------------------------------------" << endl << "\t\tNew event" << endl << "----------------------------------------" << endl<<endl;
+	cout << "Enter a subject: ";
 	cin >> subject;
-	cout << "Enter a event description: " << endl;
+	cout << "----------------------------------------";
+	cout <<endl<< "Enter a event description: ";
 	cin >> event_description;
-	cout << "choose a number: 0- for high priority or 1 - for low priority: ";
+	cout << "----------------------------------------" <<endl;
+	cout << "Choose priority: " << endl;
+	cout << endl << "Enter 0 - high"<<endl<<"Enter 1 - low"<<endl<<endl<<"Enter your choose: ";
 	cin >> temp;
 	pr = priority(temp);
-	cout << endl << "choose a number: 0 - for Securing, 1- for Cleaning, 2- for Dean, 3- for Maintenance, 4- for Students Association:";
+	cout << "----------------------------------------";
+	cout << endl <<"Choose supervisor:"<<endl<<endl <<"Enter 0 - Securing" << endl<<"Enter 1 - Cleaning"<<endl
+		<<"Enter 2 - Dean"<<endl<<"Enter 3 - Maintenance"<<endl<<"Enter 4 - Students Association"<<endl<<endl << "Enter your choose: ";
 	cin >> temp;
 	sup = supervisor(temp);
 
@@ -406,11 +410,11 @@ void new_event(int id)
 		//////->>> write to file!!
 		// date first!!!!!!->chenage
 		event_DBFile << time_buffer <<"," << event_number << "," << subject << "," << event_description << "," << get_status_string(st) << ","<<
-			get_supervisor_string(sup) <<","<< get_priority_string(pr) << "," << first_name << " " << last_name << "," << id;
+			get_supervisor_string(sup) <<","<< get_priority_string(pr) << "," << first_name << " " << last_name << "," << id<<",";
 
 		system("cls");
 		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " << event_number << endl;
-		event_number++;
+		get_set_event_number(1, event_number);
 	}
 	else
 		cout << "Sorry!!!" << endl << "You've already opened an event about it.." << endl;
@@ -485,6 +489,32 @@ void back_to_manager_profile(int id)
 	getchar();
 	getchar();
 	manager_profile(id);
+}
+
+
+int get_set_event_number(int choose, int current) // 0- write event number, 1- read event number
+{
+	ifstream read_evenet_number;
+	ofstream write_evenet_number;
+	int temp = -1;
+	switch (choose)
+	{
+	case 0://read
+	{
+		read_evenet_number.open("event_number.txt");
+		if (read_evenet_number.good())
+			read_evenet_number >> temp;
+		read_evenet_number.close();
+		break;
+	}
+	case 1://write
+		write_evenet_number.open("event_number.txt");
+		if (write_evenet_number.good())
+			write_evenet_number << current + 1;
+	default:
+		break;
+	}
+	return temp;
 }
 
 
