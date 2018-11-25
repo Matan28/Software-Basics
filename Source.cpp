@@ -5,7 +5,7 @@
 #include <fstream> // file streaming
 #include <limits> 
 #include <time.h> // for date
-#include <conio.h>
+
 
 
 using namespace std;
@@ -345,13 +345,6 @@ void print_my_event(int ID){
             exit(1);
         }
     }
-}
-int main(){
-    int id;
-    id=665847930;
-    print_my_event(id);
-    return 0;
-}
 
 void new_event(int id)
 {
