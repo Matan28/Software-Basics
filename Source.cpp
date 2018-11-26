@@ -10,23 +10,25 @@ using namespace std;
 
 void menu();
 int log_in(int authorization);//logs in for student & manager alike .
-void student_profile(int id);
-void manager_profile(int id);
+void student_profile(int id);// menu for studnt
+void manager_profile(int id); // menu for manager
 void print_my_event(int id);//prints all events by ID .
-void new_event(int id);
-int pending_events(string supervisor_manager);
-void change_event(int event_number);
-void reports();
-void print_common_evnets_stat();
+void new_event(int id); // add new event to file 
+int pending_events(string supervisor_manager); // print all pending event for this namager and ask if he wants to chanage 
+void change_event(int event_number); // chanage event by event number because this number is unique
 void print_all_events();//prints all events .
 void print_by_event_number(int Event_number);//prints the event (gets event number) .
-void print_events_by_supervisor();
-bool is_event_exist(string description_event);
-void back_to_student_profile(int id);
-void back_to_manager_profile(int id ); 
-int get_set_event_number(int choose, int current = 0);
+void back_to_student_profile(int id); // for back student profile
+void back_to_manager_profile(int id ); // for back manage profile
+int get_set_event_number(int choose, int current = 0); // to get current event number from file send choose=0 to add +1 to event number send choose=1, current = current event number(the number of last event)  
 void print_closed_events(string supervisor_manager);
 void print_pending_events(string supervisor_manager);// prints all pending and in progress events .of supervisor
+
+bool is_event_exist(string description_event);
+void analys_common_evnets();
+void analys_pending_events_by_supervisor();
+void analys_all_events_by_supervisor();
+void reports();
 
 enum status
 {
@@ -73,7 +75,6 @@ string get_priority_string(priority pr)
 
 	return string();
 }
-
 string get_supervisor_string(supervisor sup)
 {
 	switch (sup)
@@ -98,20 +99,21 @@ int main()
 
 void menu()
 {
-	int user_type, id;
+	int user_type, id, back;
 	bool is_log_in = true;
 
 	system("cls");
-	cout << "Welcome to SCE" << endl<<endl;
+	cout << "Welcome to SCE" << endl << endl;
 	cout << "Choose a number: " << endl;
-	cout << "1- student" << endl << "2 - manager" << endl<< "3 - EXIT"<<endl;
+	cout << "1 - student" << endl << "2 - manager" << endl << "3 - EXIT" << endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> user_type;
 
 	system("cls");
 	do
 	{
-        switch (user_type)
+		system("cls");
+		switch (user_type)
 		{
 		case 1: // student 
 		{
@@ -119,33 +121,49 @@ void menu()
 			if (id == -1)
 			{
 				is_log_in = false;
-				break;
+				cout << "------------------------------" << endl <<
+					"Sorry!!" << endl << "Your login information is incorrect!! " << endl << "Please try again" << endl;
+				cout << "-----------------------------" << endl << "Enter 3 - for back to menu or anything number for try again: ";
+				cin >> back;
+
+				if (back == 3)
+					menu();
 			}
-			student_profile(id);
+			else
+				student_profile(id);
 
 			break;
 		}
 		case 2: // manager
 		{
-
-			id = log_in(2);
+			id = log_in(1);
 			if (id == -1)
 			{
+				system("cls");
 				is_log_in = false;
-				break;
+				cout << "------------------------------" << endl << "------------------------------" << endl <<
+					"Sorry!!" << endl << "Your login information is incorrect!! " << endl << "Please try again" << endl;
+				cout << "-----------------------------" << endl << "Enter 3 - for back to menu or anything number for try again: ";
+				cin >> back;
+
+				if (back == 3)
+					menu();
 			}
 
-			manager_profile(id);
+			else
+				manager_profile(id);
+
 			break;
 		}
+
 		case 3:
 			cout << "Bye Bye...." << endl;
+
 		default:
 			exit(1);
 			break;
 		}
 	} while (!is_log_in);
-
 }
 
 int log_in(int authorization) // return ID otherwise return -1
@@ -251,21 +269,21 @@ void print_my_event(int ID) {
 // handle in manager profile
 void manager_profile(int id)
 {
-	int choose, event_number, tempID;
+	int choose, event_number, temp_id;
 	string supervisor_manager;
 	ifstream studentsDB;
 	studentsDB.open("StudentsDB.txt");
 	if (!studentsDB.good())
 		exit(2);
 
-	while (studentsDB >> tempID) {
-		if (tempID == id) {
-			studentsDB >> tempID;
-			studentsDB >> tempID;
+	while (studentsDB >> temp_id) { // to get supervisor
+		if (temp_id == id) {
+			studentsDB >> temp_id;
+			studentsDB >> temp_id;
 			studentsDB >> supervisor_manager;
 			studentsDB >> supervisor_manager;
-			studentsDB >> tempID;
-			studentsDB >> tempID;
+			studentsDB >> temp_id;
+			studentsDB >> temp_id;
 			studentsDB >> supervisor_manager;
 		}
 		studentsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
@@ -297,7 +315,7 @@ void manager_profile(int id)
 	case 3:
 	{
 		cout << "choose a number:" << endl;
-		cout << "1- show all event" << endl << "2- common events" << endl << "3- events by supervisor" << endl << "4- pending events by supervisor" << endl << "5 - back to manager profile" << endl;
+		cout << "1 - print all event" << endl << "2 - anount of common events" << endl << "3 - anount of all events by supervisor" << endl << "4 - anount of pending events by supervisor" << endl << "5 - back to manager profile" << endl;
 		cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 		cin >> choose;
 		switch (choose)
@@ -312,21 +330,22 @@ void manager_profile(int id)
 		case 2:
 		{
 			system("cls");
-			print_common_evnets_stat();
+			analys_common_evnets();
 			back_to_manager_profile(id);
 			break;
 		}
 		case 3:
 		{
 			system("cls");
-			print_events_by_supervisor();
+			analys_all_events_by_supervisor();
 			back_to_manager_profile(id);
 			break;
 		}
 		case 4:
 		{
+			analys_pending_events_by_supervisor();
 			system("cls");
-			pending_events(supervisor_manager);
+			
 			back_to_manager_profile(id);
 			break;
 		}
@@ -571,16 +590,6 @@ void print_pending_events(string supervisor_manager)// prints all pending and in
     cout<<endl;
 }
 
-
-void print_events_by_supervisor()
-{
-}
-
-bool is_event_exist(string description_event)
-{
-	return true;
-}
-
 void back_to_student_profile(int id)
 {
 	cout << endl << "-----------------------------------" << endl;
@@ -625,6 +634,23 @@ int get_set_event_number(int choose, int current) // 0- write event number, 1- r
 		break;
 	}
 	return temp;
+}
+
+void analys_common_evnets()
+{
+}
+
+void analys_pending_events_by_supervisor()
+{
+}
+
+void analys_all_events_by_supervisor()
+{
+}
+
+bool is_event_exist(string description_event)
+{
+	return true;
 }
 
 
