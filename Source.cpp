@@ -427,10 +427,10 @@ void new_event(int id)
 	students_DBFile.close();
 	cout <<  "----------------------------------------" << endl << "\t\tNew event" << endl << "----------------------------------------" << endl<<endl;
 	cout << "Enter a subject: ";
-	cin >> subject;
+	getline(cin, subject, '\n');
 	cout << "----------------------------------------";
 	cout <<endl<< "Enter a event description: ";
-	cin >> event_description;
+	getline(cin,event_description,'\n');
 	cout << "----------------------------------------" <<endl;
 	cout << "Choose priority: " << endl;
 	cout << endl << "Enter 0 - high"<<endl<<"Enter 1 - low"<<endl<<endl<<"Enter your choose: ";
