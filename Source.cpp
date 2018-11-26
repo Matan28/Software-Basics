@@ -234,7 +234,7 @@ void print_my_event(int ID) {
 		getline(eventsDB, Supervisor, ',');
 		getline(eventsDB, Priority, ',');
 		getline(eventsDB, Creator_name, ',');
-		getline(eventsDB, Creator_ID, ',');
+		getline(eventsDB, Creator_ID);
 		tempID = atoi(Creator_ID.c_str());
 		if (ID == tempID) 
 		{
@@ -380,7 +380,7 @@ void print_by_event_number(int Event_number)
 		getline(eventsDB, Supervisor, ',');
 		getline(eventsDB, Priority, ',');
 		getline(eventsDB, Creator_name, ',');
-		getline(eventsDB, Creator_ID, ',');
+		getline(eventsDB, Creator_ID);
 		tempEventnumber = atoi(Event_Number.c_str());
 		if (Event_number == tempEventnumber)
 		{
@@ -455,7 +455,7 @@ void new_event(int id)
 		//////->>> write to file!!
 		// date first!!!!!!->chenage
 		event_DBFile << time_buffer << "," << event_number << "," << subject << "," << event_description << "," << get_status_string(status_) << "," <<
-			get_supervisor_string(sup) << "," << get_priority_string(pr) << "," << first_name << " " << last_name << "," << id << ",";
+			get_supervisor_string(sup) << "," << get_priority_string(pr) << "," << first_name << " " << last_name << "," << id ;
 
 		system("cls");
 		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " << event_number << endl;
@@ -503,7 +503,7 @@ void print_closed_events(string supervisor_manager)
         getline(eventsDB,Supervisor,',');
         getline(eventsDB,priority,',');
         getline(eventsDB,Creator_name,',');
-        getline(eventsDB,Creator_ID,',');
+        getline(eventsDB,Creator_ID);
         if(Status=="closed" && Supervisor== supervisor_manager){
             cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
         }
@@ -538,7 +538,7 @@ void print_all_events()
         getline(eventsDB,Supervisor,',');
         getline(eventsDB,priority,',');
         getline(eventsDB,Creator_name,',');
-        getline(eventsDB,Creator_ID,',');
+        getline(eventsDB,Creator_ID);
         cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
     }
     cout<<endl;
@@ -563,7 +563,7 @@ void print_pending_events(string supervisor_manager)// prints all pending and in
         getline(eventsDB,Supervisor,',');
         getline(eventsDB,priority,',');
         getline(eventsDB,Creator_name,',');
-        getline(eventsDB,Creator_ID,',');
+        getline(eventsDB,Creator_ID);
         if(Status=="pending" || Status=="In treatment" && Supervisor== supervisor_manager){
             cout<<date1<<endl<<"priority: "<<priority<<endl<<"Subject: "<<Subject<<endl<<"supervisor: "<<Supervisor<<endl<<"Status: "<<Status<<endl<<"name: "<<Creator_name<<endl<<"ID: "<<Creator_ID<<endl<<"Event no: "<<Event_Number<<endl<<"Description: "<<Event_Description<<endl;
         }
