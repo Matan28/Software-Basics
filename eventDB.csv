@@ -1,4 +1,4 @@
-Date,Event Number,Subject,Event Description,Status ,Supervisor ,priority,Creator name,Creator ID
-21/09/2018 11:23,1,security,There is a suspicious object,Pending ,security,High,Omer Cohen,207993940
-18/07/2018 19:07,2,deficiencies,There is a blinking light in class,done,maintenance,Low ,Alon Ami,111111113
-20/05/2018 17:25,3,studies,We need more practice hours.,In treatment,Dean,High,Tzipi Lulan ,111111112
+Date,Event Number,Subject,Event Description,Status ,Supervisor ,priority,Creator name,Creator ID,remarks
+21/09/2018 11:23,1,security,There is a suspicious object,In treatment,Securing,Low,Omer Cohen,207993940,send to check
+18/07/2018 19:07,2,deficiencies,There is a blinking light in class,Done,Securing,Low ,Alon Ami,111111113,this event handle
+20/05/2018 17:25,3,studies,We need more practice hours.,In treatment,Dean,High,Tzipi Lulan ,111111112,
