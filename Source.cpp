@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream> // file streaming
 #include <limits> 
-#include <time.h> // for date
+#include <time.h> // for date 
 
 
 using namespace std;
@@ -24,15 +24,15 @@ void back_to_student_profile(int id); // for back student profile
 void back_to_manager_profile(int id ); // for back manage profile
 int get_set_event_number(int choose, int current = 0); // to get current event number from file send choose=0 to add +1 to event number send choose=1, current = current event number(the number of last event)  
 void print_closed_events(string supervisor_manager); // print events are status done
-void print_pending_events(string supervisor_manager);// prints all pending and in progress events .of supervisor
-bool is_event_exist(string description_event);
-void analytics_common_evnets(int id);
+int print_pending_events(string supervisor_manager);// prints all pending and in progress events .of supervisor
+bool is_event_exist(int id, string subject_event, string supervisor_event, string description_event); //check if event exist to this user
 void analytics_pending_events_by_supervisor(int id);
 void analytics_all_events_by_supervisor(int id);
 void reports();
 string replace_comma_to_point(string str); // if the user enter , so replace this in .
 void analytics_menu(int id);
 void back_to_analytics_menu(int id);
+string lower_string(string str);
 
 enum status
 {
@@ -173,10 +173,10 @@ void menu()
 
 int log_in(int authorization) // return ID otherwise return -1
 {
-    int ID, Password;
-    int tempID, tempPassword,tempAuthorization;
+    string ID, Password,tempID, tempPassword,tempAuthorization;
     ifstream StudentsDBFile;
-    StudentsDBFile.open("StudentsDB.txt");//StudentsDB.txt location
+    StudentsDBFile.open("StudentsDB.csv");//StudentsDB.csv location
+
     if(StudentsDBFile.fail()){
         cerr<<"error copying file to inFile"<<endl;
 		StudentsDBFile.close();
@@ -186,16 +186,25 @@ int log_in(int authorization) // return ID otherwise return -1
     cin >> ID;
     cout << "Enter Password: "<<endl;
     cin >> Password;
-    while(StudentsDBFile>>tempID){
-        if(tempID==ID){
-            StudentsDBFile >> tempPassword;
-            StudentsDBFile >> tempAuthorization;
-            if(tempPassword==Password && authorization==tempAuthorization){
-                return ID;
-            }
+
+	StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
+    
+	while(StudentsDBFile.good())
+	{
+		getline(StudentsDBFile,tempID,',');
+
+        if(tempID == ID)
+		{
+			getline(StudentsDBFile, tempPassword, ',');
+			getline(StudentsDBFile, tempAuthorization, ',');
+
+            if(tempPassword==Password && authorization == stoi(tempAuthorization))
+                return stoi(ID);
         }
+
         StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
     }
+
 	StudentsDBFile.close();
     
     return -1;
@@ -239,7 +248,7 @@ void student_profile(int id)
 }
 void print_my_event(int ID) {
 	system("cls");
-	int tempID = 0;
+	int tempID = 0, count_all_events = get_set_event_number(0) - 1;
 	string date_evenet, Event_Number, Subject, Event_Description, Status, Supervisor, Priority, Creator_name, Creator_ID,remarks;
 	ifstream eventsDB;
 	eventsDB.open("eventDB.csv");
@@ -248,7 +257,8 @@ void print_my_event(int ID) {
 		exit(1);
 	}
 	eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	while (eventsDB.good()) {
+	for(int i=0;i<count_all_events;i++)
+	{
 		getline(eventsDB, date_evenet, ',');
 		getline(eventsDB, Event_Number, ',');
 		getline(eventsDB, Subject, ',');
@@ -258,8 +268,9 @@ void print_my_event(int ID) {
 		getline(eventsDB, Priority, ',');
 		getline(eventsDB, Creator_name, ',');
 		getline(eventsDB, Creator_ID,',');
-		tempID = atoi(Creator_ID.c_str());
+		tempID = stoi(Creator_ID);
 		getline(eventsDB, remarks);
+
 		if (ID == tempID) 
 		{
 			cout << "Date: " << date_evenet << endl << "Eventer number: " << Event_Number << endl<<"Subject: " << Subject << endl
@@ -275,25 +286,37 @@ void print_my_event(int ID) {
 // handle in manager profile
 void manager_profile(int id)
 {
-	int choose, event_number, temp_id;
+	int choose,event_number;
+	string temp, temp_id;
 	string supervisor_manager;
-	ifstream studentsDB;
-	studentsDB.open("StudentsDB.txt");
-	if (!studentsDB.good())
-		exit(2);
-
-	while (studentsDB >> temp_id) { // to get supervisor
-		if (temp_id == id) {
-			studentsDB >> temp_id;
-			studentsDB >> temp_id;
-			studentsDB >> supervisor_manager;
-			studentsDB >> supervisor_manager;
-			studentsDB >> temp_id;
-			studentsDB >> supervisor_manager;
-		}
-		studentsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a line
+	ifstream StudentsDBFile;
+	StudentsDBFile.open("StudentsDB.csv");
+	if (StudentsDBFile.fail())
+	{
+		cerr << "error copying file to inFile" << endl;
+		StudentsDBFile.close();
+		exit(1);
 	}
-	studentsDB.close();
+	
+	StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
+
+	while (StudentsDBFile.good())
+	{
+		getline(StudentsDBFile, temp_id, ',');
+
+		if (stoi(temp_id) == id)
+		{
+			getline(StudentsDBFile, temp, ',');
+			getline(StudentsDBFile, temp, ',');
+			getline(StudentsDBFile, temp, ',');
+			getline(StudentsDBFile, temp);
+
+			supervisor_manager = get_supervisor_string(supervisor(stoi(temp)));
+			break;
+		}
+		StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
+	}
+	StudentsDBFile.close();
 
 	system("cls");
 	cout << "Profile manager" << endl << endl;
@@ -307,8 +330,12 @@ void manager_profile(int id)
 	case 1:
 	{
 		event_number = pending_events(id,supervisor_manager); //handle pending events
-		//check if event number not bigger and not = -1
-		change_event(event_number,supervisor_manager);
+		
+		if (event_number != -1)
+			change_event(event_number, supervisor_manager);
+		else
+			cout << "Sorry!!" << endl << "You don't have any closed event" << endl;
+
 		back_to_manager_profile(id);
 		break;
 	}
@@ -414,36 +441,45 @@ bool print_by_event_number(int Event_number,string super)
 void new_event(int id)// add new event ->working!
 {
 	system("cls");
-	int tempID, temp = 1;
+	int  temp = 1;
 	int event_number = get_set_event_number(0); // read form file 
-	string event_description, first_name, last_name, subject;
+	string temp_id, event_description, full_name, subject,super;
 	status status_ = In_process;
 	priority pr;
 	supervisor sup;
-	ifstream students_DBFile;
+	ifstream StudentsDBFile;
 	ofstream event_DBFile;
 	time_t now = time(0);
 	tm *ltm = localtime(&now);
 	char time_buffer[80];
-	strftime(time_buffer, 80, "%d/%m/%Y %I:%M",ltm);
-	students_DBFile.open("StudentsDB.txt");//StudentsDB.txt location
-	if (students_DBFile.fail()) {
-		cerr << "error copying file to inFile" << endl;
-		exit(2);
-	}
-	while (students_DBFile >> tempID) // get name from students DB
+	strftime(time_buffer, 80, "%d/%m/%Y %R",ltm);
+	
+	StudentsDBFile.open("StudentsDB.csv");
+	if (StudentsDBFile.fail())
 	{
-		if (tempID == id)
-		{
-			students_DBFile >> temp;
-			students_DBFile >> temp;
-			students_DBFile >> first_name;
-			students_DBFile >> last_name;
-		}
-
-		students_DBFile.ignore(std::numeric_limits<std::streamsize>::max(),'\n');// skips a line
+		cerr << "error copying file to inFile" << endl;
+		StudentsDBFile.close();
+		exit(1);
 	}
-	students_DBFile.close();
+
+	StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
+
+	while (StudentsDBFile.good())
+	{
+		getline(StudentsDBFile, temp_id, ',');
+
+		if (stoi(temp_id) == id)
+		{
+			getline(StudentsDBFile, full_name, ',');
+			getline(StudentsDBFile, full_name, ',');
+			getline(StudentsDBFile, full_name, ',');
+			StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
+			break;
+		}
+		StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
+	}
+	StudentsDBFile.close();
+	
 	cout <<  "----------------------------------------" << endl << "\t\tNew event" << endl << "----------------------------------------" << endl<<endl;
 	cout << "Enter a subject: ";
 	getchar();
@@ -451,7 +487,6 @@ void new_event(int id)// add new event ->working!
 	
 	cout << "----------------------------------------";
 	cout <<endl<< "Enter a event description: ";
-	getchar();
 	getline(cin,event_description,'\n');
 	cout << "----------------------------------------" <<endl;
 	cout << "Choose priority: " << endl;
@@ -462,9 +497,10 @@ void new_event(int id)// add new event ->working!
 	cout << endl << "Choose supervisor:" << endl << endl << "Enter 0 - Securing" << endl << "Enter 1 - Cleaning" << endl
 		<< "Enter 2 - Dean" << endl << "Enter 3 - Maintenance" << endl << "Enter 4 - Students Association" << endl << endl << "Enter your choose: ";
 	cin >> temp;
-	sup = supervisor(temp);
+	sup =  supervisor(temp);
+	super = get_supervisor_string(sup);
 
-	if (is_event_exist(event_description))
+	if (!is_event_exist(id,subject, super, event_description))
 	{
 		event_DBFile.open("eventDB.csv", fstream::in | fstream::out | fstream::app);
 
@@ -480,48 +516,58 @@ void new_event(int id)// add new event ->working!
 
 		//////->>> write to file!!
 		event_DBFile << time_buffer << "," << event_number << "," << subject << "," << event_description << "," << get_status_string(status_) << "," <<
-			get_supervisor_string(sup) << "," << get_priority_string(pr) << "," << first_name << " " << last_name << "," << id << "," << " "; 
+			super << "," << get_priority_string(pr) << "," << full_name << "," << id << "," << " " << endl;
 
 		system("cls");
 		cout << "Thanks for the report!" << endl << "The event received in the system" << endl << "Your event number is: " << event_number << endl;
 		get_set_event_number(1, event_number);
 	}
 	else
+	{
+		system("cls");
 		cout << "Sorry!!!" << endl << "You've already opened an event about it.." << endl;
+	}
 
 	event_DBFile.close();
 }
 
-int pending_events(int id ,string supervisor_manager)
+int pending_events(int id ,string supervisor_manager) // return -1 if this manager has not pending events
 {
 	system("cls");
-	int choose, event_num = -1;
+	int choose, event_num = -1, count_pending_events;
 	cout << "------------------------------------------------" << endl << "\tPending events for your supervisor" << endl
 		<< "------------------------------------------------"<<endl;
-	print_pending_events(supervisor_manager);
 
-	cout << endl << "-----------------------------------" << endl << "Choose a number: " << endl
-		<< "1 - choose event number for change" << endl << "2 - back to your profile manager" << endl
-		<< "-----------------------------------" << endl;
-	cout << "Your choose is: ";
-	cin >> choose;
+	count_pending_events = print_pending_events(supervisor_manager);
 
-	switch (choose)
+	if (count_pending_events != 0)
 	{
-	case 1:
-	{
-		cout << endl << "-----------------------------------" <<endl<< "Enter event number: ";
-		cin >> event_num;
-		break;
+		cout << endl << "-----------------------------------" << endl << "Choose a number: " << endl
+			<< "1 - choose event number for change" << endl << "2 - back to your profile manager" << endl
+			<< "-----------------------------------" << endl;
+		cout << "Your choose is: ";
+		cin >> choose;
+
+		switch (choose)
+		{
+		case 1:
+		{
+			cout << endl << "-----------------------------------" << endl << "Enter event number: ";
+			cin >> event_num;
+			break;
+		}
+		case 2:
+		{
+			manager_profile(id);
+			break;
+		}
+		default:
+			break;
+		}
 	}
-	case 2:
-	{
-		manager_profile(id);
-		break;
-	}
-	default:
-		break;
-	}
+	else
+		return event_num = -1;
+
 	return event_num;
 }
 
@@ -540,16 +586,16 @@ void change_event(int event_number, string supervisor_manager)
 	string priority_new, status_new, remarks,temp_string;
 	string event_date, event_num, event_subject, event_description, event_supervistor, event_id, event_name, event_status, event_priority, event_remarks;
 
-	if (print_by_event_number(event_number, supervisor_manager)) // the event number for this manager is good
+	if (print_by_event_number(event_number, supervisor_manager)) // the event number for this manager is exist
 	{
 		cout << "----------------------------------" << endl << "\tEnter your chanages" << endl << "----------------------------------" << endl;
-		cout << endl <<"Priority:" <<endl<< "Enter 0 - high" << endl << "Enter 1 - low" << endl << endl << "Enter your choose: ";
+		cout << endl << "Priority:" << endl << "Enter 0 - high" << endl << "Enter 1 - low" << endl << endl << "Enter your choose: ";
 		cin >> temp;
 		pr = priority(temp);
-		cout<<endl<<"Status: "<<endl<<"Enter 0 - Done"<<endl<<"Enter 1 - In treatment" << endl << endl << "Enter your choose: ";
+		cout << endl << "Status: " << endl << "Enter 0 - Done" << endl << "Enter 1 - In treatment" << endl << endl << "Enter your choose: ";
 		cin >> temp;
 		st = status(temp);
-		cout <<endl<< "Enter your remarks for this event: ";
+		cout << endl << "Enter your remarks for this event: ";
 		getchar();
 		getline(cin, remarks);
 
@@ -563,7 +609,7 @@ void change_event(int event_number, string supervisor_manager)
 			cerr << "error copying file to inFile" << endl;
 			exit(1);
 		}
-		
+
 		for (int i = 0; i < count_event_number; i++)
 		{
 			getline(eventsDB, event_date, ',');
@@ -587,7 +633,7 @@ void change_event(int event_number, string supervisor_manager)
 
 		eventsDB.close();
 
-		write_eventsDB.open("eventDB.csv",ios::trunc); // to write new
+		write_eventsDB.open("eventDB.csv", ios::trunc); // to write new
 		if (eventsDB.fail())
 		{
 			cerr << "error copying file to inFile" << endl;
@@ -598,10 +644,9 @@ void change_event(int event_number, string supervisor_manager)
 			write_eventsDB << array_events[i];
 
 		write_eventsDB.close();
-
 	}
 	else
-		cout << "This event number doesn't exist or this doesn't belong to you!" << endl;
+		cout << "The event number you entered is incorrect!!! " << endl;
 }
 
 void print_closed_events(string supervisor_manager) // ->> working!!
@@ -683,7 +728,7 @@ void print_all_events() // ->>working!!
 	eventsDB.close();
 }
 
-void print_pending_events(string supervisor_manager)// prints all pending and in progress events
+int print_pending_events(string supervisor_manager)// prints all pending and in progress events. return the number of pending events because if 0 not print the change
 {
     string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,Priority,Creator_name,Creator_ID, remarks;
     ifstream eventsDB;
@@ -705,7 +750,7 @@ void print_pending_events(string supervisor_manager)// prints all pending and in
         getline(eventsDB,Creator_name,',');
         getline(eventsDB,Creator_ID,',');
 		getline(eventsDB, remarks);
-        if(Status=="In process" || Status=="In treatment" && Supervisor== supervisor_manager)
+        if((Status=="In process" || Status=="In treatment") && Supervisor== supervisor_manager)
 		{
 			cout << "Date: " << date1 << endl << "Eventer number: " << Event_Number << endl << "Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
@@ -719,7 +764,7 @@ void print_pending_events(string supervisor_manager)// prints all pending and in
 	if (count_pending_events == 0)
 		cout << "You don't have pending events now!" << endl;
     cout<<endl;
-
+	return count_pending_events;
 }
 
 void back_to_student_profile(int id)
@@ -903,7 +948,7 @@ void analytics_all_events_by_supervisor(int id)
 	system("cls");
 	double count_securing = 0, count_cleaning = 0, count_maintenance = 0, count_Students_Association = 0, count_dean = 0;
 	ifstream eventsDB;
-	int count_events = get_set_event_number(0) - 1;
+	int count_events = get_set_event_number(0) - 1,counter=0;
 	string event_date, Event_number, subject;
 	string Event_Description, Status, Supervisor;
 
@@ -916,7 +961,7 @@ void analytics_all_events_by_supervisor(int id)
 		exit(2);
 	}
 	eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // not include the first line because it's title
-	while (eventsDB.good() && count_events > 0)
+	while (eventsDB.good() && counter<count_events)
 	{
 		getline(eventsDB, event_date, ',');
 		getline(eventsDB, Event_number, ',');
@@ -937,10 +982,9 @@ void analytics_all_events_by_supervisor(int id)
 		else if (Supervisor.compare(get_supervisor_string(supervisor::Students_Association)) == 0)
 			count_Students_Association++;
 
-		--count_events;
+		++counter;
 	}
 	eventsDB.close();
-	count_events = get_set_event_number(0) - 1;
 
 	cout << "Cleaning: " << (count_cleaning / count_events) * 100 << " %" << endl;
 	cout << "Dean: " <<  (count_dean / count_events) * 100 << " %" << endl;
@@ -969,8 +1013,8 @@ void analytics_menu(int id)
 	cout << "--------------------------------------" << endl << "              Analytics" << endl << "--------------------------------------" << endl << endl;
 
 	cout << "choose a number:" << endl;
-	cout << "1 - Common Event" << endl << "2 - Events By supervisor" << endl <<"3 - Pending Events By Supervisor"<<endl
-		<< "4 - back to manager profile" << endl;
+	cout <<  "1 - Events By supervisor" << endl <<"2 - Pending Events By Supervisor"<<endl
+		<< "2 - back to manager profile" << endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 	cin >> choose;
 
@@ -978,20 +1022,15 @@ void analytics_menu(int id)
 	{
 	case 1:
 	{
-		analytics_common_evnets(id);
+		analytics_all_events_by_supervisor(id);
 		break;
 	}
 	case 2:
 	{
-		analytics_all_events_by_supervisor(id);
-		break;
-	}
-	case 3:
-	{
 		analytics_pending_events_by_supervisor(id);
 		break;
 	}
-	case 4:
+	case 3:
 	{
 		manager_profile(id);
 		break;
@@ -1001,10 +1040,55 @@ void analytics_menu(int id)
 	}
 }
 
-void analytics_common_evnets(int id )
+bool is_event_exist(int id,string subject_event, string supervisor_event, string description_event)
 {
+	ifstream eventsDB;
+	int count_events = get_set_event_number(0) - 1;
+	string event_date, Event_number, subject;
+	string Event_Description, Status, Supervisor,Priority,name,ID;
+
+	eventsDB.open("eventDB.csv");
+	if (eventsDB.fail())
+	{
+		cout << "error while opening the database of the events " << endl;
+		exit(2);
+	}
+	eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // not include the first line because it's title
+	while (eventsDB.good() && count_events > 0)
+	{
+		getline(eventsDB, event_date, ',');
+		getline(eventsDB, Event_number, ',');
+		getline(eventsDB, subject, ',');
+		getline(eventsDB, Event_Description, ',');
+		getline(eventsDB, Status, ',');
+		getline(eventsDB, Supervisor, ',');
+		getline(eventsDB, Priority, ',');
+		getline(eventsDB, name, ',');
+		getline(eventsDB, ID, ',');
+		eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); 
+
+		if (id == id && supervisor_event == Supervisor) // if this equal so check the other
+		{
+			// ignore lowercass or upercass so convert all the lowercass
+			subject = lower_string(subject);
+			subject_event = lower_string(subject_event);
+			Event_Description = lower_string(Event_Description);
+			description_event = lower_string(description_event);
+			if (subject.compare(subject_event) == 0 &&Event_Description.compare(description_event))
+				return true;
+		}
+
+		--count_events;
+	}
+	eventsDB.close();
+
+	return false;
 }
-bool is_event_exist(string description_event)
+
+string lower_string(string str)
 {
-	return true;
+	int  length_str = str.length();
+	for (int i = 0; i < length_str; i++)
+		str[i] = tolower(str[i]);
+	return str;
 }
