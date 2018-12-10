@@ -1,3 +1,14 @@
 Date,Event Number,Subject,Event Description,Status ,Supervisor ,priority,Creator name,Creator ID,remarks
-04/12/2018 23:26,1,security,there is a suspicious object,In process,Securing,High,shai idan,111111113, 
+04/12/2018 23:26,1,security,there is a suspicious object,In treatment,Securing,High,shai idan,111111113,I sent the security guard 
 04/12/2018 23:30,2,studies,we need more practive hours,In process,Dean,High,yarin edri,111111112, 
+10/12/2018 08:39,3,mens toilet,there is no paper in the mens toilet,In treatment,Cleaning,Low,yarin edri,111111112,The cleaning lady went to fetch paper there
+10/12/2018 08:45,4,broken table,in room 174 there is a broken table ,In process,Maintenance,Low,yarin edri,111111112, 
+10/12/2018 08:45,5,broken chair,in rooms 1003 1004 1005 there are broken chairs,In process,Maintenance,High,kesem evenhen,111111111, 
+10/12/2018 08:47,6,happening,when u will do another happenning like u do in the beggining,In process,Students Association,Low,kesem evenhen,111111111, 
+10/12/2018 08:48,7,scholarship,there is not enough info for the scolarships ,In process,Dean,High,matan tal,111111114, 
+10/12/2018 08:52,8,cafiteria,the prices in the cafiteria are unfair,In process,Students Association,High,matan tal,111111114, 
+10/12/2018 08:55,9,library,in the library there is unknown person ,Done,Securing,High,shai idan,111111113,checking with securty 
+10/12/2018 09:03,10,girls toilet,in the girls toilet near to the cafiteria some girl vomited,Done,Securing,Low,noy nir,207993940,I sent the security guard to check what was going on there and the cleaning woman to clean it
+10/12/2018 09:03,11,cable reveal,in room 1006 there are some cables that reveals,In process,Maintenance,High,noy nir,207993940, 
+10/12/2018 09:11,12,laboratory classes,there is not enough pc for all the students during the classes,In process,Maintenance,High,adam yahnin,203248786, 
+10/12/2018 09:12,13,board,in room 131 the board cant be cleaned by paper ,In process,Cleaning,Low,adam yahnin,203248786, 
