@@ -732,14 +732,14 @@ int print_pending_events(string supervisor_manager)// prints all pending and in 
 {
     string date1,Event_Number,Subject,Event_Description,Status ,Supervisor ,Priority,Creator_name,Creator_ID, remarks;
     ifstream eventsDB;
-	int count_pending_events = 0;
+	int count_pending_events = 0,count_events = get_set_event_number(0)-1;
     eventsDB.open("eventDB.csv");
     if(eventsDB.fail()){
         cerr<<"error copying file to inFile"<<endl;
         exit(1);
     }
     eventsDB.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    while(eventsDB.good()){
+    while(eventsDB.good() && count_events>0){
         getline(eventsDB,date1,',');
         getline(eventsDB,Event_Number,',');
         getline(eventsDB,Subject,',');
@@ -750,7 +750,7 @@ int print_pending_events(string supervisor_manager)// prints all pending and in 
         getline(eventsDB,Creator_name,',');
         getline(eventsDB,Creator_ID,',');
 		getline(eventsDB, remarks);
-        if((Status=="In process" || Status=="In treatment") && Supervisor== supervisor_manager)
+        if((Status=="In process" || Status=="In treatment") && Supervisor== supervisor_manager )
 		{
 			cout << "Date: " << date1 << endl << "Eventer number: " << Event_Number << endl << "Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
@@ -758,6 +758,7 @@ int print_pending_events(string supervisor_manager)// prints all pending and in 
 				<< "Creator ID: " << Creator_ID << endl << "Remarks: " << remarks << endl;
 			cout << "-----------------------------------------------------------" << endl;
 			++count_pending_events;
+			--count_events;
         }
     }
 	eventsDB.close();
