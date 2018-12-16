@@ -377,30 +377,31 @@ void manager_profile(int id)
 		}
 
 		}
-	case 4:
-	{
-		system("cls"); // clean screen
-		reports();
-		back_to_manager_profile(id);
-		break;
+	
+		case 4:
+		{
+			system("cls"); // clean screen
+			reports();
+			back_to_manager_profile(id);
+			break;
+		}
+		case 5:
+		{
+			new_event(id);
+			back_to_manager_profile(id);
+			break;
+		}
+		case 6:
+		{
+			menu();
+			break;
+		}
+		default:
+			exit(2);
+			break;
+		}
+		}
 	}
-	case 5:
-	{
-		new_event(id);
-		back_to_manager_profile(id);
-		break;
-	}
-	case 6:
-	{
-		menu();
-		break;
-	}
-	default:
-		exit(2);
-		break;
-	}
-	}
-}
 bool print_by_event_number(int Event_number,string super)
 {
 	bool is_exist = false;
