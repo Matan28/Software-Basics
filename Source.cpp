@@ -810,6 +810,8 @@ int get_set_event_number(int choose, int current) // 0- write event number, 1- r
 		read_evenet_number.open("event_number.txt");
 		if (read_evenet_number.good())
 			read_evenet_number >> temp;
+		else
+			exit(1);
 		read_evenet_number.close();
 		break;
 	}
@@ -817,6 +819,8 @@ int get_set_event_number(int choose, int current) // 0- write event number, 1- r
 		write_evenet_number.open("event_number.txt");
 		if (write_evenet_number.good())
 			write_evenet_number << current + 1;
+		else
+			exit(1);
 	default:
 		break;
 	}
