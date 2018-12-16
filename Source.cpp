@@ -377,6 +377,7 @@ void manager_profile(int id)
 		}
 
 		}
+	}
 	case 4:
 	{
 		system("cls"); // clean screen
