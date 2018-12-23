@@ -107,6 +107,8 @@ void menu()
 	int user_type, id, back;
 	bool is_log_in = true;
 
+	do
+	{
 	system("cls");
 	cout << "Welcome to SCE" << endl << endl;
 	cout << "Choose a number: " << endl;
@@ -114,9 +116,6 @@ void menu()
 	cout << endl << "-----------------------------------" << endl << "Enter your choose: ";
 	cin >> user_type;
 
-	system("cls");
-	do
-	{
 		system("cls");
 		switch (user_type)
 		{
@@ -128,11 +127,13 @@ void menu()
 				is_log_in = false;
 				cout << "------------------------------" << endl <<
 					"Sorry!!" << endl << "Your login information is incorrect!! " << endl << "Please try again" << endl;
-				cout << "-----------------------------" << endl << "Enter 3 - for back to menu or anything number for try again: ";
+				cout << "-----------------------------" << endl << "Enter 3 - for back to menu: ";
 				cin >> back;
 
 				if (back == 3)
 					menu();
+				else
+					exit(0);
 			}
 			else
 				student_profile(id);
@@ -144,15 +145,16 @@ void menu()
 			id = log_in(2);
 			if (id == -1)
 			{
-				system("cls");
 				is_log_in = false;
 				cout << "------------------------------" << endl << "------------------------------" << endl <<
 					"Sorry!!" << endl << "Your login information is incorrect!! " << endl << "Please try again" << endl;
-				cout << "-----------------------------" << endl << "Enter 3 - for back to menu or anything number for try again: ";
+				cout << "-----------------------------" << endl << "Enter 3 - for back to menu: ";
 				cin >> back;
-
+				
 				if (back == 3)
 					menu();
+				else
+					exit(0);
 			}
 
 			else
@@ -163,9 +165,10 @@ void menu()
 
 		case 3:
 			cout << "Bye Bye...." << endl;
+			exit(0);
 
 		default:
-			exit(1);
+			is_log_in = false;
 			break;
 		}
 	} while (!is_log_in);
@@ -214,9 +217,11 @@ int log_in(int authorization) // return ID otherwise return -1
 void student_profile(int id)
 {
 	int choose;
+	bool is_error = false;
+
 	system("cls");
 
-	cout << "Student profile!" << endl<<endl;
+	cout << "Student profile!" << endl << endl;
 	cout << "choose a number:" << endl;
 	cout << "1 - show my event" << endl << "2 - new event" << endl << "3 - back to menu" << endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
@@ -242,7 +247,8 @@ void student_profile(int id)
 		break;
 	}
 	default:
-		exit(2);
+		cout << "Error!!" << endl<< "Enter invalid input" << endl;
+		exit(0);
 		break;
 	}
 }
@@ -273,7 +279,7 @@ void print_my_event(int ID) {
 
 		if (ID == tempID) 
 		{
-			cout << "Date: " << date_evenet << endl << "Eventer number: " << Event_Number << endl<<"Subject: " << Subject << endl
+			cout << "Date: " << date_evenet << endl << "Event number: " << Event_Number << endl<<"Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 				Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << Creator_name << endl
 				<< "Creator ID: " << Creator_ID << endl<<"Remarks: "<<remarks<<endl;
@@ -286,7 +292,7 @@ void print_my_event(int ID) {
 // handle in manager profile
 void manager_profile(int id)
 {
-	int choose,event_number;
+	int choose, event_number;
 	string temp, temp_id;
 	string supervisor_manager;
 	ifstream StudentsDBFile;
@@ -297,7 +303,7 @@ void manager_profile(int id)
 		StudentsDBFile.close();
 		exit(1);
 	}
-	
+
 	StudentsDBFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');// skips a first line
 
 	while (StudentsDBFile.good())
@@ -329,8 +335,8 @@ void manager_profile(int id)
 	{
 	case 1:
 	{
-		event_number = pending_events(id,supervisor_manager); //handle pending events
-		
+		event_number = pending_events(id, supervisor_manager); //handle pending events
+
 		if (event_number != -1)
 			change_event(event_number, supervisor_manager);
 		else
@@ -348,7 +354,7 @@ void manager_profile(int id)
 	case 3:
 	{
 		system("cls");
-		cout << "--------------------------------------" << endl<< "             All events" << endl << "--------------------------------------" << endl << endl;
+		cout << "--------------------------------------" << endl << "             All events" << endl << "--------------------------------------" << endl << endl;
 
 		cout << "choose a number:" << endl;
 		cout << "1 - print all events" << endl << "2 - analytics" << endl << "3 - back to manager profile" << endl;
@@ -375,33 +381,41 @@ void manager_profile(int id)
 			manager_profile(id);
 			break;
 		}
-
-		}
-	
-		case 4:
-		{
-			system("cls"); // clean screen
-			reports();
-			back_to_manager_profile(id);
-			break;
-		}
-		case 5:
-		{
-			new_event(id);
-			back_to_manager_profile(id);
-			break;
-		}
-		case 6:
-		{
-			menu();
-			break;
-		}
 		default:
-			exit(2);
+		{
+			cout << "Error!!" << endl << "Enter invalid input" << endl;
+			exit(0);
 			break;
 		}
 		}
 	}
+	case 4:
+	{
+		system("cls"); // clean screen
+		reports();
+		back_to_manager_profile(id);
+		break;
+	}
+	case 5:
+	{
+		new_event(id);
+		back_to_manager_profile(id);
+		break;
+	}
+	case 6:
+	{
+		menu();
+		break;
+	}
+	default:
+	{
+		cout << "Error!!" << endl << "Enter invalid input" << endl;
+		exit(0);
+		break;
+	}
+	
+	}
+}
 bool print_by_event_number(int Event_number,string super)
 {
 	bool is_exist = false;
@@ -427,7 +441,7 @@ bool print_by_event_number(int Event_number,string super)
 		tempEventnumber = atoi(Event_Number.c_str());
 		if (Event_number == tempEventnumber && Supervisor == super) // also check if this event belongs to this supervisor
 		{
-			cout << "Date: " << date1 << endl << "Eventer number: " << Event_number <<endl<< "Subject: " << Subject << endl
+			cout << "Date: " << date1 << endl << "Event number: " << Event_number <<endl<< "Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 				Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << Creator_name << endl
 				<< "Creator ID: " << Creator_ID << endl;
@@ -490,14 +504,25 @@ void new_event(int id)// add new event ->working!
 	cout <<endl<< "Enter a event description: ";
 	getline(cin,event_description,'\n');
 	cout << "----------------------------------------" <<endl;
-	cout << "Choose priority: " << endl;
-	cout << endl << "Enter 0 - high"<<endl<<"Enter 1 - low"<<endl<<endl<<"Enter your choose: ";
-	cin >> temp;
+	do
+	{
+		cout << "Choose priority: " << endl;
+		cout << endl << "Enter 0 - high" << endl << "Enter 1 - low" << endl << endl << "Enter your choose: ";
+		cin >> temp;
+		if (!(temp == 0 || temp == 1))
+			cout <<endl<< "Error" << endl << "invalid input!" << endl;
+	} while (!(temp == 0 || temp == 1));
+
 	pr = priority(temp);
-	cout << "----------------------------------------";
-	cout << endl << "Choose supervisor:" << endl << endl << "Enter 0 - Securing" << endl << "Enter 1 - Cleaning" << endl
-		<< "Enter 2 - Dean" << endl << "Enter 3 - Maintenance" << endl << "Enter 4 - Students Association" << endl << endl << "Enter your choose: ";
-	cin >> temp;
+	do
+	{
+		cout << "----------------------------------------";
+		cout << endl << "Choose supervisor:" << endl << endl << "Enter 0 - Securing" << endl << "Enter 1 - Cleaning" << endl
+			<< "Enter 2 - Dean" << endl << "Enter 3 - Maintenance" << endl << "Enter 4 - Students Association" << endl << endl << "Enter your choose: ";
+		cin >> temp;
+		if (!(temp == 0 || temp == 1 || temp == 2 || temp == 3 || temp == 4))
+			cout <<endl<< "Error" << endl << "invalid input!" << endl;
+	} while (!(temp == 0 || temp == 1 || temp == 2 || temp == 3 || temp == 4));
 	sup =  supervisor(temp);
 	super = get_supervisor_string(sup);
 
@@ -563,7 +588,11 @@ int pending_events(int id ,string supervisor_manager) // return -1 if this manag
 			break;
 		}
 		default:
+		{
+			cout << "Error!!" << endl << "Enter invalid input" << endl;
+			exit(0);
 			break;
+		}
 		}
 	}
 	else
@@ -589,12 +618,22 @@ void change_event(int event_number, string supervisor_manager)
 
 	if (print_by_event_number(event_number, supervisor_manager)) // the event number for this manager is exist
 	{
-		cout << "----------------------------------" << endl << "\tEnter your chanages" << endl << "----------------------------------" << endl;
-		cout << endl << "Priority:" << endl << "Enter 0 - high" << endl << "Enter 1 - low" << endl << endl << "Enter your choose: ";
-		cin >> temp;
+		do
+		{
+			cout << "Choose priority: " << endl;
+			cout << endl << "Enter 0 - high" << endl << "Enter 1 - low" << endl << endl << "Enter your choose: ";
+			cin >> temp;
+			if (!(temp == 0 || temp == 1))
+				cout << endl << "Error" << endl << "invalid input!" << endl;
+		} while (!(temp == 0 || temp == 1));
 		pr = priority(temp);
-		cout << endl << "Status: " << endl << "Enter 0 - Done" << endl << "Enter 1 - In treatment" << endl << endl << "Enter your choose: ";
-		cin >> temp;
+		do
+		{ 
+			cout << endl << "Status: " << endl << "Enter 0 - Done" << endl << "Enter 1 - In treatment" << endl << endl << "Enter your choose: ";
+			cin >> temp;
+			if (!(temp == 0 || temp == 1))
+				cout << endl << "Error" << endl << "invalid input!" << endl;
+		} while (!(temp == 0 || temp == 1));
 		st = status(temp);
 		cout << endl << "Enter your remarks for this event: ";
 		getchar();
@@ -677,7 +716,7 @@ void print_closed_events(string supervisor_manager) // ->> working!!
 		getline(eventsDB, remarks);
         if(Status=="Done" && Supervisor== supervisor_manager)
 		{
-			cout << "Date: " << date1 << endl << "Eventer number: " << Event_Number << endl << "Subject: " << Subject << endl
+			cout << "Date: " << date1 << endl << "Event number: " << Event_Number << endl << "Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 				Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << Creator_name << endl
 				<< "Creator ID: " << Creator_ID << endl << "Remarks:" << remarks << endl;
@@ -718,7 +757,7 @@ void print_all_events() // ->>working!!
 		getline(eventsDB, Creator_ID,',');
 		getline(eventsDB, remarks);
 
-		cout << "Date: " << date1 << endl << "Eventer number: " << Event_Number << endl << "Subject: " << Subject << endl
+		cout << "Date: " << date1 << endl << "Event number: " << Event_Number << endl << "Subject: " << Subject << endl
 			<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 			Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << Creator_name << endl
 			<< "Creator ID: " << Creator_ID << endl << "Remarks: " << remarks << endl;
@@ -753,7 +792,7 @@ int print_pending_events(string supervisor_manager)// prints all pending and in 
 		getline(eventsDB, remarks);
         if((Status=="In process" || Status=="In treatment") && Supervisor== supervisor_manager )
 		{
-			cout << "Date: " << date1 << endl << "Eventer number: " << Event_Number << endl << "Subject: " << Subject << endl
+			cout << "Date: " << date1 << endl << "Event number: " << Event_Number << endl << "Subject: " << Subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 				Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << Creator_name << endl
 				<< "Creator ID: " << Creator_ID << endl << "Remarks: " << remarks << endl;
@@ -877,7 +916,7 @@ void reports()
 		getline(event_DBFile, remarks);
 		if (Status == the_status_entered || Supervisor == the_supervisor_entered || Event_number == the_events_number_entered || event_date == the_date_entered || the_priorty_entered == Priority)
 		{
-			cout << "Date: " << event_date << endl << "Eventer number: " << Event_number << endl << "Subject: " << subject << endl
+			cout << "Date: " << event_date << endl << "Event number: " << Event_number << endl << "Subject: " << subject << endl
 				<< "Event description: " << Event_Description << endl << "Status: " << Status << endl << "Supervisor: " <<
 				Supervisor << endl << "Priority: " << Priority << endl << "Creator name: " << creator_name << endl
 				<< "Creator ID: " << creator_ID << endl << "Remarks: " << remarks << endl;
@@ -1020,7 +1059,7 @@ void analytics_menu(int id)
 
 	cout << "choose a number:" << endl;
 	cout <<  "1 - Events By supervisor" << endl <<"2 - Pending Events By Supervisor"<<endl
-		<< "2 - back to manager profile" << endl;
+		<< "3 - back to manager profile" << endl;
 	cout << endl << "-----------------------------------" << endl << "Enter your choice: ";
 	cin >> choose;
 
